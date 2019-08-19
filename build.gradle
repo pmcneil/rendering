@@ -7,6 +7,7 @@ buildscript {
         maven { url "https://repo.grails.org/grails/core" }
     }
     dependencies {
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4"
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
     }
 }
@@ -16,19 +17,14 @@ plugins {
     id "com.jfrog.bintray" version "1.2"
 }
 
-version "2.0.3"
+version "2.0.3a-SNAPSHOT"
 group "org.grails.plugins"
 
-apply plugin: 'maven-publish'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
-apply plugin: "spring-boot"
 apply plugin: "org.grails.grails-plugin"
+apply plugin: "org.grails.grails-plugin-publish"
 apply plugin: "org.grails.grails-gsp"
-apply plugin: "org.grails.grails-doc"
-// Used for publishing to central repository, remove if not needed
-apply from:'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/grailsCentralPublishing.gradle'
-apply from:'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/bintrayPublishing.gradle'
 
 ext {
     grailsVersion = project.grailsVersion
@@ -52,6 +48,8 @@ dependencyManagement {
     applyMavenExclusions false
 }
 
+ext['tomcat.version'] = '7.0.59'
+
 dependencies {
 
     compile("org.xhtmlrenderer:core-renderer:R8")
@@ -60,14 +58,14 @@ dependencies {
         exclude module:'jempbox'
     }
 
-    provided 'org.springframework.boot:spring-boot-starter-logging'
-    provided "org.springframework.boot:spring-boot-starter-actuator"
+    provided "org.springframework.boot:spring-boot-starter-logging"
     provided "org.springframework.boot:spring-boot-autoconfigure"
+    provided "org.springframework.boot:spring-boot-starter-actuator"
     provided "org.springframework.boot:spring-boot-starter-tomcat"
 
     provided "org.grails:grails-web-boot"
     provided "org.grails:grails-dependencies"
-    provided 'javax.servlet:javax.servlet-api:3.1.0'
+//    provided 'javax.servlet:javax.servlet-api:3.0.1'
 
     testCompile "org.grails:grails-plugin-testing"
     testCompile 'org.grails:grails-datastore-rest-client:4.0.3.RELEASE'
@@ -85,4 +83,21 @@ jar {
   exclude "*.data"
   exclude "gsp_*"
   exclude "gsp/*"
+}
+
+grailsPublish {
+    user = 'user'
+    key = 'key'
+    userOrg = 'bio-org-au' // optional, otherwise published to personal bintray account
+    repo = 'plugins' // optional, defaults to 'plugins'
+
+    websiteUrl = 'http://github.com/gpc'
+    license {
+        name = 'Apache-2.0'
+    }
+    issueTrackerUrl = 'http://gpc.github.com/grails-rendering/issues'
+    vcsUrl = 'http://gpc.github.com/grails-rendering'
+    title = "Grails Rendering"
+    desc = "Render GSPs as PDFs, JPEGs, GIFs and PNGs"
+    developers = [gpc:"Grails Plugin Collective"]
 }
