@@ -51,7 +51,7 @@ class XhtmlDocumentService {
 		try {
 			XMLResource.load(xhtml).document
 		} catch (Exception e) {
-			if (log.errorEnabled) {
+			if (log.isDebugEnabled()) {
 				GrailsUtil.deepSanitize(e)
 				log.error("xml parse exception for input source: $xhtml", e)
 			}
